@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SNR-Aware Automatic Modulation Classification — Cyberpunk Tactical Signal Intelligence Interface.">
+    <title>SNR-Aware AMC // CYBER_INTEL</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="cyber-scanlines" aria-hidden="true"></div>
+<div class="cyber-vignette" aria-hidden="true"></div>
+
+<div class="app-container">
+
+    <header class="header">
+        <div class="header__badge">
+            <span class="header__badge-dot"></span>
+            <span class="header__badge-text">SYS.ONLINE // AI_SIGINT_V1.0</span>
+        </div>
+        
+        <h1 class="header__title cyber-glitch" data-text="SNR-AWARE AMC">
+            SNR-AWARE AMC
+        </h1>
+        
+        <div class="header__sub-bar">
+            <span class="prompt-arrow">&gt;</span>
+            <span class="header__subtitle">
+                TACTICAL RF CLASSIFIER // ESTIMATING SNR REGION &amp; MODULATION REGIME
+            </span>
+            <span class="cursor-blink">_</span>
+        </div>
+    </header>
+
+    <section class="upload-section">
+        <div class="card cyber-card" id="card-upload">
+            <div class="terminal-bar">
+                <div class="terminal-dots">
+                    <span class="t-dot t-dot--red"></span>
+                    <span class="t-dot t-dot--yellow"></span>
+                    <span class="t-dot t-dot--green"></span>
+                </div>
+                <div class="terminal-title">MODULE://IQ_STREAM_INGEST</div>
+                <div class="terminal-tag">STATUS: IDLE</div>
+            </div>
+
+            <div class="card__title">
+                <span class="card__title-prefix">&gt;</span>
+                <span>SIGNAL UPLOAD</span>
+                <span class="card__title-code">[INPUT_FORMAT: .NPY (2×128)]</span>
+            </div>
+
+            <div class="upload-zone cyber-chamfer-sm" id="upload-zone">
+                <input type="file" id="file-input" accept=".npy">
+                <div class="hud-bracket hud-bracket--tl"></div>
+                <div class="hud-bracket hud-bracket--tr"></div>
+                <div class="hud-bracket hud-bracket--bl"></div>
+                <div class="hud-bracket hud-bracket--br"></div>
+
+                <div class="upload-zone__scanner" aria-hidden="true"></div>
+                <div class="upload-zone__icon">📡</div>
+                <div class="upload-zone__text">DROP IQ SIGNAL TELEMETRY OR CLICK TO INTERFACE</div>
+                <div class="upload-zone__hint">
+                    <code>FORMAT: .NPY</code> &nbsp;·&nbsp; <code>SHAPE: 2 × 128 (I/Q FLOAT32)</code>
+                </div>
+            </div>
+
+            <div class="file-info cyber-chamfer-sm" id="file-info">
+                <span class="file-info__icon">⚡</span>
+                <div class="file-info__details">
+                    <div class="file-info__name" id="file-name">—</div>
+                    <div class="file-info__meta" id="file-meta">—</div>
+                </div>
+                <button class="file-info__remove" id="remove-file" title="Purge buffer" aria-label="Remove selected file">✕</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="actions-row">
+        <button class="btn-cyber btn-predict" id="predict-btn" disabled>
+            <span class="btn-predict__label">&gt; EXECUTE PREDICTION</span>
+            <span class="spinner"></span>
+        </button>
+        <button class="btn-cyber btn-cyber--secondary btn-live" id="live-btn">
+            &gt; TAKE LIVE SDR INPUT
+        </button>
+    </div>
+
+    <section class="results-section" id="results-section">
+        <div class="results-grid">
+
+            <div class="card cyber-card snr-result">
+                <div class="terminal-bar">
+                    <div class="terminal-dots">
+                        <span class="t-dot t-dot--red"></span>
+                        <span class="t-dot t-dot--yellow"></span>
+                        <span class="t-dot t-dot--green"></span>
+                    </div>
+                    <div class="terminal-title">TELEMETRY://SNR_ESTIMATION</div>
+                </div>
+
+                <div class="card__title">
+                    <span class="card__title-prefix">&gt;</span>
+                    <span>SNR REGIME</span>
+                </div>
+
+                <div class="snr-badge cyber-chamfer-sm" id="snr-badge">—</div>
+                <div class="snr-confidence" id="snr-confidence">—</div>
+                
+                <div class="snr-probs-wrapper">
+                    <div class="hud-label">CONFIDENCE DISTRIBUTION:</div>
+                    <div class="snr-probs" id="snr-probs"></div>
+                </div>
+            </div>
+
+            <div class="card cyber-card mod-result">
+                <div class="terminal-bar">
+                    <div class="terminal-dots">
+                        <span class="t-dot t-dot--red"></span>
+                        <span class="t-dot t-dot--yellow"></span>
+                        <span class="t-dot t-dot--green"></span>
+                    </div>
+                    <div class="terminal-title">TELEMETRY://MOD_CLASSIFIER</div>
+                </div>
+
+                <div class="card__title">
+                    <span class="card__title-prefix">&gt;</span>
+                    <span>MODULATION TYPE</span>
+                </div>
+
+                <div id="mod-result-card" style="display: none;">
+                    <div class="mod-class cyber-glitch" id="mod-class">—</div>
+                    <div class="mod-confidence" id="mod-confidence">—</div>
+                    <div class="mod-confidence-bar cyber-chamfer-sm">
+                        <div class="mod-confidence-bar__fill" id="mod-conf-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="mod-not-available cyber-chamfer-sm" id="mod-not-available" style="display: none;">
+                    <div class="mod-not-available__icon">⚠️</div>
+                    <div class="mod-not-available__title">EXPERT MODEL OFFLINE</div>
+                    <p id="mod-not-avail-msg"></p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="waveform-section" id="waveform-section">
+        <div class="card cyber-card">
+            <div class="terminal-bar">
+                <div class="terminal-dots">
+                    <span class="t-dot t-dot--red"></span>
+                    <span class="t-dot t-dot--yellow"></span>
+                    <span class="t-dot t-dot--green"></span>
+                </div>
+                <div class="terminal-title">OSCILLOSCOPE://IQ_RADAR_ANALYZER</div>
+                <div class="terminal-tag">BUFFER: 128 SAMPLES</div>
+            </div>
+
+            <div class="waveform-header-row">
+                <div class="card__title">
+                    <span class="card__title-prefix">&gt;</span>
+                    <span>SIGNAL OSCILLOGRAM</span>
+                </div>
+
+                <div class="waveform-tabs">
+                    <button class="waveform-tab cyber-chamfer-sm active" data-view="iq">&gt; I / Q</button>
+                    <button class="waveform-tab cyber-chamfer-sm" data-view="magnitude">&gt; MAGNITUDE</button>
+                    <button class="waveform-tab cyber-chamfer-sm" data-view="phase">&gt; PHASE</button>
+                </div>
+            </div>
+
+            <div class="waveform-canvas-wrapper cyber-chamfer-sm">
+                <div class="radar-crosshair" aria-hidden="true"></div>
+                <canvas id="waveform-canvas"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer__line">
+            <span class="footer__brand">CYBER_AMC // SYS_SPEC: FASTAPI + TENSORFLOW DEEP_NET</span>
+            <span class="footer__status">[ ENCRYPTED INTERFACE // 256-BIT ]</span>
+        </div>
+    </footer>
+
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal cyber-card cyber-chamfer" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="terminal-bar">
+            <div class="terminal-dots">
+                <span class="t-dot t-dot--red"></span>
+                <span class="t-dot t-dot--yellow"></span>
+                <span class="t-dot t-dot--green"></span>
+            </div>
+            <div class="terminal-title" id="modal-title">SDR_HW_LINK://ERROR_404</div>
+        </div>
+        <div class="modal__content">
+            <div class="modal__icon">📻</div>
+            <div class="modal__heading">HARDWARE INTERFACE REQUIRED</div>
+            <div class="modal__body">
+                Live RF IQ acquisition requires dedicated SDR front-end hardware
+                (e.g., RTL-SDR, HackRF One, or USRP transceiver) and cannot be
+                digitized directly within a sandboxed browser environment.<br><br>
+                <span class="cyber-highlight">&gt; UPCOMING FIRMWARE:</span> A WebSocket IQ streaming daemon is slated for deployment to pipe real-time raw baseband samples.
+            </div>
+            <button class="btn-cyber modal__close" id="modal-close">&gt; ACKNOWLEDGE</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast cyber-chamfer-sm" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
