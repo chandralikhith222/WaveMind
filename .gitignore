@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Data (large files — keep in .gitignore)
+data/X_*.npy
+data/mod_*.npy
+data/snr_*.npy
+snr_est_data/
+
+# Model files (large — optional, tracked via Git LFS or excluded)
+# backend/models/*.keras
+
+# Logs
+*.log
