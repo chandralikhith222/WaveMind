@@ -166,7 +166,7 @@ uvicorn backend.app:app --reload --host 0.0.0.0 --port 8000
 
 Open your web browser and navigate to:
 ```
-http://localhost:8000
+https://wavemind-1.onrender.com/
 ```
 
 ---
@@ -174,7 +174,7 @@ http://localhost:8000
 ## 📡 Usage Guide
 
 ### Using the Web Interface
-1. Open the dashboard at `http://localhost:8000`.
+1. Open the dashboard at `https://wavemind-1.onrender.com/`.
 2. Drag and drop any `.npy` file from `data/samples/` into the upload zone (or click to browse).
 3. Click **`> EXECUTE PREDICTION`**.
 4. Inspect the outputs:
