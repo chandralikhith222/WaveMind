@@ -169,6 +169,22 @@ Open your web browser and navigate to:
 https://wavemind-1.onrender.com/
 ```
 
+### Deploying to Render
+
+This repository includes `render.yaml`, which configures a Python 3.11 web
+service. In Render, choose **New > Blueprint** and select this repository.
+Render will use:
+
+```text
+Build Command: pip install --upgrade pip && pip install -r requirements.txt
+Start Command: uvicorn backend.app:app --host 0.0.0.0 --port $PORT --workers 1
+```
+
+The model files under `backend/models/` and `med_snr_model/` must be committed
+to the repository. Do not use a multi-worker start command because each worker
+loads its own TensorFlow models and can exceed the memory limit on small Render
+instances.
+
 ---
 
 ## 📡 Usage Guide

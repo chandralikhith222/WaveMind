@@ -104,13 +104,16 @@ async def predict_endpoint(file: UploadFile = File(...)):
     return result
 
 
-app.mount("/css", StaticFiles(directory=str(FRONTEND_DIR / "css")), name="css")
-app.mount("/js", StaticFiles(directory=str(FRONTEND_DIR / "js")), name="js")
-
-
 @app.get("/")
 async def serve_frontend():
     return FileResponse(str(FRONTEND_DIR / "index.html"))
+
+
+app.mount(
+    "/",
+    StaticFiles(directory=str(FRONTEND_DIR), html=True),
+    name="frontend",
+)
 
 
 if __name__ == "__main__":
