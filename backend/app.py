@@ -48,12 +48,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://wavmind-2i4r5e2oh-chandralikhith222-9278s-projects.vercel.app",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -66,6 +62,7 @@ async def health_check():
     return {
         "status": "healthy",
         "snr_estimator_loaded": model_registry.snr_estimator is not None,
+        "med_snr_classifier_loaded": model_registry.med_snr_classifier is not None,
         "amc_models": {
             region: (model is not None)
             for region, model in model_registry.amc_models.items()
@@ -114,3 +111,12 @@ app.mount("/js", StaticFiles(directory=str(FRONTEND_DIR / "js")), name="js")
 @app.get("/")
 async def serve_frontend():
     return FileResponse(str(FRONTEND_DIR / "index.html"))
+
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("backend.app:app", host="0.0.0.0", port=port)
+

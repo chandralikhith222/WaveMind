@@ -15,10 +15,6 @@ NOT_IMPLEMENTED_MESSAGES: dict[str, str] = {
         "Low-SNR AMC model not implemented yet. "
         "A specialised low-SNR expert classifier will be added in a future version."
     ),
-    "MEDIUM": (
-        "Medium-SNR AMC model not implemented yet. "
-        "A specialised medium-SNR expert classifier will be added in a future version."
-    ),
 }
 
 
@@ -42,20 +38,32 @@ def route_prediction(
         }
 
     amc_model = model_registry.get_amc_model(snr_category)
+
+    # ------------------------------------------------------------------
+    # MEDIUM-SNR path: delegate entirely to MedSNRClassifier.
+    # It handles 4-channel feature engineering, model.predict(), and
+    # label decoding internally, then returns the standard result dict.
+    # ------------------------------------------------------------------
+    if snr_category == "MEDIUM":
+        return model_registry.med_snr_classifier.predict(preprocessed_signal)
+
+    # ------------------------------------------------------------------
+    # HIGH-SNR (and any future) path: raw 2-channel input, global dict.
+    # ------------------------------------------------------------------
     raw_output = amc_model.predict(preprocessed_signal, verbose=0)
     probabilities = raw_output[0]  # shape (num_classes,)
 
     predicted_index = int(np.argmax(probabilities))
     confidence = float(probabilities[predicted_index])
-    predicted_class = MODULATION_CLASSES.get(predicted_index, f"Class_{predicted_index}")
 
+    predicted_class = MODULATION_CLASSES.get(predicted_index, f"Class_{predicted_index}")
     all_probs = {
         MODULATION_CLASSES.get(i, f"Class_{i}"): float(p)
         for i, p in enumerate(probabilities)
     }
 
     logger.info(
-        "%s-SNR AMC → %s (%.2f%% confidence)",
+        "%s-SNR AMC -> %s (%.2f%% confidence)",
         snr_category, predicted_class, confidence * 100,
     )
 
